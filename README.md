@@ -37,7 +37,7 @@
 
 ### 1. Клонирование репозитория
 ```bash
-git clone [https://github.com/VeregaS/vet_clinic.git](https://github.com/VeregaS/vet_clinic.git)
+git clone https://github.com/VeregaS/vet_clinic.git
 cd vet_clinic
 ```
 
