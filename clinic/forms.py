@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django import forms
 from django.utils import timezone
 
@@ -69,3 +71,29 @@ class AppointmentForm(forms.ModelForm):
         if data < timezone.now():
             raise forms.ValidationError("Нельзя записаться на прошлую дату!")
         return data
+
+    def clean(self):
+        cleaned_data = super().clean()
+        doctor = cleaned_data.get("doctor")
+        date_time = cleaned_data.get("date_time")
+
+        if not doctor or not date_time:
+            return
+
+        if date_time.minute != 30:
+            self.add_error(
+                "date_time",
+                "Запись возможна только на половину часа (8:30, 9:30, 10:30 и т.д.)",
+            )
+
+        collision = Appointment.objects.filter(
+            doctor=doctor, date_time=date_time
+        ).exists()
+
+        if collision:
+            self.add_error(
+                "date_time",
+                "На это время врач уже занят! Пожалуйста, выберите другой час.",
+            )
+
+        return cleaned_data
