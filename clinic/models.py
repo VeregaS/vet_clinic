@@ -5,6 +5,12 @@ class Doctor(models.Model):
     full_name = models.CharField("ФИО Врача", max_length=150)
     specialization = models.CharField("Специализация", max_length=100)
     phone = models.CharField("Телефон", max_length=20, blank=True)
+    telegram_id = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        help_text="Узнать свой ID можно у бота @userinfobot",
+    )
 
     class Meta:
         verbose_name = "Врач"
