@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Рабочий стол врача</title>
+</head>
+<body>
+    <h1>Записи на прием</h1>
+
+    <a href="#">+ Добавить запись</a>
+    <hr>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Время</th>
+                <th>Пациент</th>
+                <th>Владелец</th>
+                <th>Жалоба</th>
+                <th>Статус</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments %}
+            <tr>
+                <td>{{ appointment.date_time }}</td>
+                <td>
+                    <strong>{{ appointment.patient.name }}</strong>
+                    ({{ appointment.patient.species }})
+                </td>
+                <td>{{ appointment.patient.owner_name }}</td>
+                <td>{{ appointment.complaint }}</td>
+                <td>{{ appointment.get_status_display }}</td>
+                </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">Записей нет</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
