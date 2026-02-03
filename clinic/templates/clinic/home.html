@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ветклиника доктора Котова</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'clinic/css/style.css' %}">
+</head>
+<body>
+
+<div class="hero-section">
+    <div class="container">
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    ✅ {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <h1 class="display-3 fw-bold">Забота о ваших любимцах</h1>
+                <p class="lead mb-4">Профессиональные ветеринары, современное оборудование и любовь к каждому хвостику.</p>
+                <ul>
+                    <li>🚑 Помощь 24/7</li>
+                    <li>🔬 Собственная лаборатория</li>
+                    <li>🦷 Качественная хирургия</li>
+                </ul>
+                <a href="#appointment-form" class="btn btn-light btn-lg mt-3 fw-bold">Записаться онлайн</a>
+            </div>
+
+            <div class="col-lg-5 offset-lg-1">
+                <div class="form-card" id="appointment-form">
+                    <h3 class="mb-4 text-center">Запишитесь на приём прямо сейчас!</h3>
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.owner_name.label_tag }}
+                                {{ form.owner_name }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.owner_phone.label_tag }}
+                                {{ form.owner_phone }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.pet_name.label_tag }}
+                                {{ form.pet_name }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.pet_species.label_tag }}
+                                {{ form.pet_species }}
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="mb-3">
+                            {{ form.doctor.label_tag }}
+                            {{ form.doctor }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.date_time.label_tag }}
+                            {{ form.date_time }}
+                            <div class="text-danger small">
+                                {{ form.date_time.errors }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.complaint.label_tag }}
+                            {{ form.complaint }}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 btn-lg">Подтвердить запись</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

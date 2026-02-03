@@ -25,12 +25,13 @@ SECRET_KEY = "REDACTED_EXAMPLE_ONLY"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["0.0.0.0"]
+ALLOWED_HOSTS = ["0.0.0.0", "192.168.0.105"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    "clinic",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
