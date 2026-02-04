@@ -70,13 +70,24 @@
                             {{ form.doctor }}
                         </div>
 
-                        <div class="mb-3">
-                            {{ form.date_time.label_tag }}
-                            {{ form.date_time }}
-                            <div class="text-danger small">
-                                {{ form.date_time.errors }}
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.date.label_tag }}
+                                {{ form.date }}
+                                <div class="text-danger small">
+                                    {{ form.date.errors }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.time_slot.label_tag }}
+                                {{ form.time_slot }}
+                                <div class="text-danger small">
+                                    {{ form.time_slot.errors }}
+                                </div>
                             </div>
                         </div>
+
 
                         <div class="mb-3">
                             {{ form.complaint.label_tag }}

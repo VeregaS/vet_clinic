@@ -1,21 +1,13 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django import forms
 from django.utils import timezone
 
+from .constants import SPECIES_CHOICES, TIME_CHOICES
 from .models import Appointment
 
 
 class AppointmentForm(forms.ModelForm):
-    SPECIES_CHOICES = [
-        ("dog", "Собака"),
-        ("cat", "Кошка"),
-        ("parrot", "Попугай"),
-        ("hamster", "Хомяк"),
-        ("snake", "Змея"),
-        ("other", "Другое"),
-    ]
-
     owner_name = forms.CharField(
         max_length=50,
         help_text="Введите своё ФИО",
@@ -46,17 +38,23 @@ class AppointmentForm(forms.ModelForm):
             attrs={"class": "form-control", "placeholder": "Кличка"}
         ),
     )
+    date = forms.DateField(
+        label="Дата приема",
+        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+    )
+
+    time_slot = forms.ChoiceField(
+        label="Время",
+        choices=TIME_CHOICES,
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
 
     class Meta:
         model = Appointment
-
-        fields = ["doctor", "date_time", "complaint"]
+        fields = ["doctor", "complaint"]
 
         widgets = {
             "doctor": forms.Select(attrs={"class": "form-select"}),
-            "date_time": forms.DateTimeInput(
-                attrs={"class": "form-control", "type": "datetime-local"}
-            ),
             "complaint": forms.Textarea(
                 attrs={
                     "class": "form-control",
@@ -66,24 +64,38 @@ class AppointmentForm(forms.ModelForm):
             ),
         }
 
-    def clean_date_time(self):
-        data = self.cleaned_data["date_time"]
-        if data < timezone.now():
-            raise forms.ValidationError("Нельзя записаться на прошлую дату!")
-        return data
+    def save(self, commit=True):
+        appointment = super().save(commit=False)
+
+        chosen_date = self.cleaned_data["date"]
+        chosen_time_str = self.cleaned_data["time_slot"]
+
+        chosen_time = datetime.strptime(chosen_time_str, "%H:%M").time()
+
+        appointment.date_time = datetime.combine(chosen_date, chosen_time)
+
+        if commit:
+            appointment.save()
+        return appointment
 
     def clean(self):
         cleaned_data = super().clean()
         doctor = cleaned_data.get("doctor")
-        date_time = cleaned_data.get("date_time")
+        date = cleaned_data.get("date")
+        time_str = cleaned_data.get("time_slot")
+        date_time = None
+
+        if date and time_str:
+            t_obj = datetime.strptime(time_str, "%H:%M").time()
+            date_time = datetime.combine(date, t_obj)
 
         if not doctor or not date_time:
             return
 
-        if date_time.minute != 30:
+        if date_time < datetime.now():
             self.add_error(
-                "date_time",
-                "Запись возможна только на половину часа (8:30, 9:30, 10:30 и т.д.)",
+                "date",
+                "Невозможно записаться на прошлую дату!",
             )
 
         collision = Appointment.objects.filter(
@@ -92,7 +104,7 @@ class AppointmentForm(forms.ModelForm):
 
         if collision:
             self.add_error(
-                "date_time",
+                "time_slot",
                 "На это время врач уже занят! Пожалуйста, выберите другой час.",
             )
 
