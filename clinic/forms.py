@@ -1,3 +1,4 @@
+import re
 from datetime import datetime, timedelta
 
 from django import forms
@@ -17,11 +18,15 @@ class AppointmentForm(forms.ModelForm):
         ),
     )
     owner_phone = forms.CharField(
-        max_length=11,
+        max_length=20,
         help_text="Введите свой номер телефона",
         label="Телефон",
         widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Телефон"}
+            attrs={
+                "class": "form-control",
+                "placeholder": "+7 (999) 000-00-00",
+                "type": "tel",
+            }
         ),
     )
     pet_species = forms.ChoiceField(
@@ -77,6 +82,29 @@ class AppointmentForm(forms.ModelForm):
         if commit:
             appointment.save()
         return appointment
+
+    def clean_owner_phone(self):
+        phone = self.cleaned_data["owner_phone"]
+
+        digits = re.sub(r"\D", "", phone)
+
+        if len(digits) == 11:
+            if digits.startswith("8"):
+                digits = "7" + digits[1:]
+            elif digits.startswith("7"):
+                pass
+            else:
+                self.add_error(
+                    "owner_phone",
+                    "Номер должен начинаться с +7 или 8",
+                )
+        else:
+            self.add_error(
+                "owner_phone",
+                "Номер телефона должен содержать 11 цифр",
+            )
+
+        return f"+{digits}"
 
     def clean(self):
         cleaned_data = super().clean()
