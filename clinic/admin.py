@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Appointment, Doctor, MedicalRecord, Patient
+from .models import Appointment, Doctor, Patient
 
 
 @admin.register(Doctor)
@@ -19,8 +19,3 @@ class PatientAdmin(admin.ModelAdmin):
 class AppointmentAdmin(admin.ModelAdmin):
     list_display = ("date_time", "patient", "doctor", "status")
     list_filter = ("status", "date_time")
-
-
-@admin.register(MedicalRecord)
-class MedicalRecordAdmin(admin.ModelAdmin):
-    list_display = ("patient", "doctor", "created_at")
