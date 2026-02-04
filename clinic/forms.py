@@ -4,7 +4,7 @@ from datetime import datetime
 from django import forms
 
 from .constants import SPECIES_CHOICES, TIME_CHOICES
-from .models import Appointment
+from .models import Appointment, Doctor, Patient
 
 
 class AppointmentForm(forms.ModelForm):
@@ -25,6 +25,7 @@ class AppointmentForm(forms.ModelForm):
                 "class": "form-control",
                 "placeholder": "+7 (999) 000-00-00",
                 "type": "tel",
+                "id": "phone-mask",
             }
         ),
     )
@@ -44,7 +45,9 @@ class AppointmentForm(forms.ModelForm):
     )
     date = forms.DateField(
         label="Дата приема",
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(
+            attrs={"class": "form-control", "type": "date", "placeholder": "дд.мм.гггг"}
+        ),
     )
 
     time_slot = forms.ChoiceField(
@@ -136,3 +139,118 @@ class AppointmentForm(forms.ModelForm):
             )
 
         return cleaned_data
+
+
+class PatientForm(forms.ModelForm):
+    class Meta:
+        model = Patient
+        fields = ["name", "species", "breed", "birth_date", "owner_name", "owner_phone"]
+        labels = {
+            "name": "Кличка",
+            "species": "Вид",
+            "breed": "Порода",
+            "birth_date": "Дата рождения",
+            "owner_name": "Владелец",
+            "owner_phone": "Телефон",
+        }
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control"}),
+            "species": forms.Select(
+                choices=SPECIES_CHOICES, attrs={"class": "form-select"}
+            ),
+            "breed": forms.TextInput(attrs={"class": "form-control"}),
+            "birth_date": forms.DateInput(
+                attrs={"class": "form-control", "type": "date"}
+            ),
+            "owner_name": forms.TextInput(attrs={"class": "form-control"}),
+            "owner_phone": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "+7 (999) 000-00-00",
+                    "type": "tel",
+                    "id": "phone-mask",
+                }
+            ),
+        }
+
+    def clean_owner_phone(self):
+        phone = self.cleaned_data["owner_phone"]
+
+        digits = re.sub(r"\D", "", phone)
+
+        if len(digits) == 11:
+            if digits.startswith("8"):
+                digits = "7" + digits[1:]
+            elif digits.startswith("7"):
+                pass
+            else:
+                self.add_error(
+                    "owner_phone",
+                    "Номер должен начинаться с +7 или 8",
+                )
+        else:
+            self.add_error(
+                "owner_phone",
+                "Номер телефона должен содержать 11 цифр",
+            )
+
+        return f"+{digits}"
+
+
+class DoctorAppointmentForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ["diagnosis", "prescription", "status"]
+        labels = {
+            "diagnosis": "Поставленный диагноз",
+            "prescription": "Назначения / Рецепт",
+            "status": "Статус визита",
+        }
+        widgets = {
+            "diagnosis": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "rows": 3,
+                    "placeholder": "Опишите диагноз...",
+                }
+            ),
+            "prescription": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "rows": 4,
+                    "placeholder": "Список лекарств и рекомендаций...",
+                }
+            ),
+            "status": forms.Select(attrs={"class": "form-select"}),
+        }
+
+
+class DoctorForm(forms.ModelForm):
+    class Meta:
+        model = Doctor
+        fields = ["full_name", "specialization", "phone", "telegram_id"]
+        labels = {
+            "full_name": "ФИО врача",
+            "specialization": "Специализация",
+            "phone": "Телефон",
+            "telegram_id": "Telegram id для оповещения о новых записях",
+        }
+        widgets = {
+            "full_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Иванов Иван Иванович"}
+            ),
+            "specialization": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Хирург"}
+            ),
+            "phone": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "+7 (999) 000-00-00",
+                    "type": "tel",
+                    "id": "phone-mask",
+                }
+            ),
+            "telegram_id": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "123456789"}
+            ),
+        }

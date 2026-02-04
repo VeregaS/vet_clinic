@@ -1,0 +1,76 @@
+{% extends 'clinic/base_staff.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>База пациентов</h2>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-2">
+            <div class="col-md-10">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                    <input type="text" name="q" class="form-control border-start-0"
+                           placeholder="Поиск по кличке, владельцу или телефону..."
+                           value="{{ request.GET.q }}">
+                </div>
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-primary">Найти</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Пациент</th>
+                    <th>Порода</th>
+                    <th>Владелец</th>
+                    <th>Контакты</th>
+                    <th class="text-end">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in patients %}
+                <tr>
+                    <td>
+                        <a href="{% url 'patient_detail' patient.id %}" class="fw-bold text-decoration-none text-dark">
+                            {{ patient.name }}
+                        </a>
+                        <div class="small text-muted">{{ patient.get_species_display }}</div>
+                    </td>
+
+                    <td>{{ patient.breed|default:"-" }}</td>
+
+                    <td>{{ patient.owner_name }}</td>
+
+                    <td>
+                        <a href="tel:{{ patient.owner_phone }}" class="text-decoration-none">
+                            {{ patient.owner_phone }}
+                        </a>
+                    </td>
+
+                    <td class="text-end">
+                        <a href="{% url 'patient_detail' patient.id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-folder2-open"></i> Карта
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-5 text-muted">
+                        <i class="bi bi-search display-6 d-block mb-2"></i>
+                        Ничего не найдено
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

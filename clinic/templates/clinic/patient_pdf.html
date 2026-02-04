@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Карта пациента: {{ patient.name }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+
+        body {
+            font-family: sans-serif;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .header {
+            border-bottom: 2px solid #0d6efd;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .clinic-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0d6efd;
+            text-transform: uppercase;
+        }
+        .doc-meta {
+            text-align: right;
+            font-size: 12px;
+            color: #777;
+        }
+
+        .patient-card {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .info-row {
+            margin-bottom: 10px;
+        }
+        .label {
+            font-weight: bold;
+            color: #555;
+            width: 150px;
+            display: inline-block;
+        }
+
+        h2 {
+            font-size: 18px;
+            color: #333;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #eee;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #0d6efd;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        td {
+            font-size: 13px;
+        }
+        .date-col { width: 15%; font-weight: bold; }
+        .doctor-col { width: 25%; }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div>
+            <div class="clinic-name">Доктор Котов</div>
+            <div>Ветеринарная клиника</div>
+        </div>
+    </div>
+
+    <h1>Медицинская карта пациента</h1>
+
+    <div class="patient-card">
+        <div class="info-row">
+            <span class="label">Кличка:</span>
+            <strong>{{ patient.name }}</strong>
+        </div>
+        <div class="info-row">
+            <span class="label">Вид / Порода:</span>
+            {{ patient.get_species_display }} / {{ patient.breed|default:"-" }}
+        </div>
+        <div class="info-row">
+            <span class="label">Дата рождения:</span>
+            {{ patient.birth_date|date:"d.m.Y"|default:"Не указана" }}
+        </div>
+        <div class="info-row">
+            <span class="label">Владелец:</span>
+            {{ patient.owner_name }}
+        </div>
+        <div class="info-row">
+            <span class="label">Телефон:</span>
+            {{ patient.owner_phone }}
+        </div>
+    </div>
+
+    <h2>История посещений</h2>
+
+    {% if history %}
+    <table>
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Врач</th>
+                <th>Жалоба / Диагноз</th>
+                <th>Назначения</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for apt in history %}
+            <tr>
+                <td class="date-col">
+                    {{ apt.date_time|date:"d.m.Y" }}<br>
+                    <small style="color:#777">{{ apt.date_time|date:"H:i" }}</small>
+                </td>
+                <td class="doctor-col">
+                    {{ apt.doctor.full_name }}<br>
+                    <small>{{ apt.doctor.specialization }}</small>
+                </td>
+                <td>
+                    <strong>Жалоба:</strong> {{ apt.complaint }}<br>
+                    {% if apt.diagnosis %}
+                    <br><strong>Диагноз:</strong> {{ apt.diagnosis }}
+                    {% endif %}
+                </td>
+                <td>
+                    {{ apt.prescription|linebreaksbr|default:"-" }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p style="color: #777; font-style: italic;">Записей о приемах пока нет.</p>
+    {% endif %}
+
+    <div class="footer">
+        Документ сформирован автоматически {{ now|date:"d.m.Y H:i" }}. Ветклиника доктора Котова.
+    </div>
+
+</body>
+</html>

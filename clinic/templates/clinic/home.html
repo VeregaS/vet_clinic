@@ -5,110 +5,131 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Ветклиника доктора Котова</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
     <link rel="stylesheet" href="{% static 'clinic/css/style.css' %}">
 </head>
 <body>
 
-<div class="hero-section">
+<div class="main-container d-flex align-items-center justify-content-center">
     <div class="container">
 
         {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    ✅ {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <div class="row justify-content-center mb-4">
+                <div class="col-md-8">
+                    {% for message in messages %}
+                        <div class="alert custom-alert fade show shadow-sm" role="alert">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span><i class="bi bi-check-circle-fill me-2"></i> {{ message }}</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
+            </div>
         {% endif %}
 
-        <div class="row align-items-center">
-            <div class="col-lg-6 mb-5 mb-lg-0">
-                <h1 class="display-3 fw-bold">Забота о ваших любимцах</h1>
-                <p class="lead mb-4">Профессиональные ветеринары, современное оборудование и любовь к каждому хвостику.</p>
-                <ul>
-                    <li>🚑 Помощь 24/7</li>
-                    <li>🔬 Собственная лаборатория</li>
-                    <li>🦷 Качественная хирургия</li>
-                </ul>
-                <a href="#appointment-form" class="btn btn-light btn-lg mt-3 fw-bold">Записаться онлайн</a>
+        <div class="row align-items-center gy-5">
+
+            <div class="col-lg-6 text-center text-lg-start">
+                <h1 class="hero-title mb-3">
+                    Доктор <span class="text-highlight">Котов</span>
+                </h1>
+                <p class="hero-subtitle mb-4">
+                    Мы лечим тех, кого вы любите.<br>
+                    Профессионально. Круглосуточно. С душой.
+                </p>
+
+                <div class="d-flex gap-3 justify-content-center justify-content-lg-start flex-wrap">
+                    <div class="info-pill">
+                        <i class="bi bi-geo-alt-fill"></i> Санкт-Петербург
+                    </div>
+                    <div class="info-pill">
+                        <i class="bi bi-clock-fill"></i> 24/7
+                    </div>
+                </div>
             </div>
 
             <div class="col-lg-5 offset-lg-1">
-                <div class="form-card" id="appointment-form">
-                    <h3 class="mb-4 text-center">Запишитесь на приём прямо сейчас!</h3>
+                <div class="glass-card">
+                    <div class="text-center mb-4">
+                        <h4 class="fw-bold m-0" style="color: #2d3748;">Онлайн запись</h4>
+                    </div>
 
                     <form method="post">
                         {% csrf_token %}
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                {{ form.owner_name.label_tag }}
-                                {{ form.owner_name }}
+                        <div class="form-floating mb-3">
+                            {{ form.owner_name }}
+                            <label for="{{ form.owner_name.id_for_label }}">Ваше имя</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            {{ form.owner_phone }}
+                            <label for="{{ form.owner_phone.id_for_label }}">Телефон</label>
+                            <div class="text-danger small ms-2">{{ form.owner_phone.errors }}</div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-7">
+                                <div class="form-floating">
+                                    {{ form.pet_name }}
+                                    <label>Кличка питомца</label>
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                {{ form.owner_phone.label_tag }}
-                                {{ form.owner_phone }}
-                                <div class="text-danger small">
-                                    {{ form.owner_phone.errors }}
+                            <div class="col-5">
+                                <div class="form-floating">
+                                    {{ form.pet_species }}
+                                    <label>Вид</label>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                {{ form.pet_name.label_tag }}
-                                {{ form.pet_name }}
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                {{ form.pet_species.label_tag }}
-                                {{ form.pet_species }}
-                            </div>
+                        <div class="form-floating mb-3">
+                             {{ form.doctor }}
+                             <label>Выберите врача</label>
                         </div>
 
-                        <hr>
-
-                        <div class="mb-3">
-                            {{ form.doctor.label_tag }}
-                            {{ form.doctor }}
-                        </div>
-
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                {{ form.date.label_tag }}
-                                {{ form.date }}
-                                <div class="text-danger small">
-                                    {{ form.date.errors }}
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <div class="form-floating">
+                                    {{ form.date }}
+                                    <label>Дата</label>
                                 </div>
+                                <div class="text-danger small">{{ form.date.errors }}</div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                {{ form.time_slot.label_tag }}
-                                {{ form.time_slot }}
-                                <div class="text-danger small">
-                                    {{ form.time_slot.errors }}
+                            <div class="col-6">
+                                <div class="form-floating">
+                                    {{ form.time_slot }}
+                                    <label>Время</label>
                                 </div>
+                                <div class="text-danger small">{{ form.time_slot.errors }}</div>
                             </div>
                         </div>
 
-
-                        <div class="mb-3">
-                            {{ form.complaint.label_tag }}
+                        <div class="form-floating mb-4">
                             {{ form.complaint }}
+                            <label>Что беспокоит?</label>
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100 btn-lg">Подтвердить запись</button>
+                        <button type="submit" class="btn btn-glass w-100">
+                            Подтвердить запись
+                        </button>
                     </form>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/imask"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var phoneInput = document.getElementById('id_owner_phone');
+        var phoneInput = document.getElementById('phone-mask');
 
         if (phoneInput) {
             var maskOptions = {

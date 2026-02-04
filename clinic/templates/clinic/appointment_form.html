@@ -1,0 +1,63 @@
+{% extends 'clinic/base_staff.html' %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'doctor_dashboard' %}" class="text-decoration-none text-secondary">
+        <i class="bi bi-arrow-left"></i> Назад без сохранения
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 mb-4 bg-light">
+            <div class="card-body">
+                <h3 class="text-primary fw-bold">{{ appointment.patient.name }}</h3>
+                <span class="badge bg-secondary mb-3">{{ appointment.patient.species }}</span>
+
+                <p>
+                    <strong>Владелец:</strong> {{ appointment.patient.owner_name }}<br>
+                    <strong>Тел:</strong> {{ appointment.patient.owner_phone }}
+                </p>
+                <hr>
+                <h6 class="text-muted">ЖАЛОБА ПРИ ЗАПИСИ:</h6>
+                <p class="fs-5 fst-italic">"{{ appointment.complaint }}"</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Результаты осмотра</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Статус</label>
+                        {{ form.status }}
+                        <div class="form-text">Выберите "Завершено", если прием окончен.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Диагноз</label>
+                        {{ form.diagnosis }}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Назначения</label>
+                        {{ form.prescription }}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-save"></i> Сохранить результаты
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
