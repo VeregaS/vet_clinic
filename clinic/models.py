@@ -48,10 +48,15 @@ class Appointment(models.Model):
 
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, verbose_name="Врач")
     patient = models.ForeignKey(
-        Patient, on_delete=models.CASCADE, verbose_name="Пациент"
+        Patient,
+        on_delete=models.CASCADE,
+        verbose_name="Пациент",
+        related_name="history",
     )
     date_time = models.DateTimeField("Дата и время приема")
     complaint = models.TextField("Жалоба", blank=True)
+    diagnosis = models.TextField("Диагноз", blank=True, default="")
+    prescription = models.TextField("Назначения / Рецепт", blank=True, default="")
     status = models.CharField(
         "Статус", max_length=20, choices=STATUS_CHOICES, default="planned"
     )
@@ -63,26 +68,3 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f"{self.date_time.strftime('%d.%m %H:%M')} - {self.patient.name}"
-
-
-class MedicalRecord(models.Model):
-    patient = models.ForeignKey(
-        Patient,
-        on_delete=models.CASCADE,
-        related_name="history",
-        verbose_name="Пациент",
-    )
-    doctor = models.ForeignKey(
-        Doctor, on_delete=models.SET_NULL, null=True, verbose_name="Врач"
-    )
-    diagnosis = models.CharField("Диагноз", max_length=200)
-    treatment = models.TextField("Назначенное лечение")
-    created_at = models.DateTimeField("Дата осмотра", auto_now_add=True)
-
-    class Meta:
-        verbose_name = "Запись в медкарте"
-        verbose_name_plural = "Медицинские карты"
-        ordering = ["-created_at"]
-
-    def __str__(self):
-        return f"{self.patient.name} - {self.diagnosis}"
