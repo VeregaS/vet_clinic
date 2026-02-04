@@ -1,8 +1,7 @@
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django import forms
-from django.utils import timezone
 
 from .constants import SPECIES_CHOICES, TIME_CHOICES
 from .models import Appointment
@@ -76,11 +75,11 @@ class AppointmentForm(forms.ModelForm):
         chosen_time_str = self.cleaned_data["time_slot"]
 
         chosen_time = datetime.strptime(chosen_time_str, "%H:%M").time()
-
         appointment.date_time = datetime.combine(chosen_date, chosen_time)
 
         if commit:
             appointment.save()
+
         return appointment
 
     def clean_owner_phone(self):
