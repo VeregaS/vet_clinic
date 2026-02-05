@@ -1,0 +1,175 @@
+[
+  {
+    "model": "clinic.doctor",
+    "pk": 6,
+    "fields": {
+      "full_name": "Доктор Ливси",
+      "specialization": "Терапевт-оптимист",
+      "phone": "+7 (000) 000-00-01",
+      "telegram_id": null
+    }
+  },
+  {
+    "model": "clinic.doctor",
+    "pk": 7,
+    "fields": {
+      "full_name": "Доктор Грегори Хаус",
+      "specialization": "Диагност",
+      "phone": "+7 (000) 000-00-02",
+      "telegram_id": null
+    }
+  },
+  {
+    "model": "clinic.doctor",
+    "pk": 8,
+    "fields": {
+      "full_name": "Доктор Джон Дулиттл",
+      "specialization": "Зоопсихолог",
+      "phone": "+7 (000) 000-00-03",
+      "telegram_id": null
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 18,
+    "fields": {
+      "name": "Скуби-Ду",
+      "species": "Собака",
+      "breed": "Немецкий дог",
+      "birth_date": "2025-09-01",
+      "owner_name": "Шегги Роджерс",
+      "owner_phone": "+7 (000) 000-00-08",
+      "created_at": "2026-02-05T11:31:55.082Z"
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 19,
+    "fields": {
+      "name": "Гарфилд",
+      "species": "Кошка",
+      "breed": "",
+      "birth_date": "2025-07-01",
+      "owner_name": "Джон Арбакл",
+      "owner_phone": "+7 (000) 000-00-04",
+      "created_at": "2026-02-05T11:32:51.431Z"
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 20,
+    "fields": {
+      "name": "Плотва",
+      "species": "Другое",
+      "breed": "Лошадь",
+      "birth_date": "2025-05-01",
+      "owner_name": "Геральт из Ривии",
+      "owner_phone": "+7 (000) 000-00-06",
+      "created_at": "2026-02-05T11:33:33.762Z"
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 21,
+    "fields": {
+      "name": "Беззубик",
+      "species": "Другое",
+      "breed": "Ночная Фурия",
+      "birth_date": "2024-11-01",
+      "owner_name": "Иккинг Кровожадный Карасик III",
+      "owner_phone": "+7 (000) 000-00-05",
+      "created_at": "2026-02-05T11:35:11.767Z"
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 22,
+    "fields": {
+      "name": "Ракета",
+      "species": "Другое",
+      "breed": "Енот?",
+      "birth_date": "2024-02-01",
+      "owner_name": "Питер Джейсон Квилл",
+      "owner_phone": "+7 (000) 000-00-07",
+      "created_at": "2026-02-05T11:36:02.963Z"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 31,
+    "fields": {
+      "doctor": 6,
+      "patient": 18,
+      "date_time": "2026-02-07T12:30:00Z",
+      "complaint": "Паническая атака при виде призраков. Постоянный голод.",
+      "diagnosis": "Стресс.",
+      "prescription": "Диета, прогулки на свежем воздухе без расследований и поисков призраков.",
+      "status": "completed"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 32,
+    "fields": {
+      "doctor": 7,
+      "patient": 19,
+      "date_time": "2026-02-07T14:30:00Z",
+      "complaint": "Ненавидит понедельники, агрессия к собакам.",
+      "diagnosis": "Полностью здоров.",
+      "prescription": "Покормить лазаньей.",
+      "status": "completed"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 33,
+    "fields": {
+      "doctor": 8,
+      "patient": 20,
+      "date_time": "2026-02-11T15:30:00Z",
+      "complaint": "Постоянно застревает в заборах и на крышах.",
+      "diagnosis": "Синдром \"Глитча текстур\"",
+      "prescription": "Новый патч 1.0.5",
+      "status": "completed"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 34,
+    "fields": {
+      "doctor": 7,
+      "patient": 19,
+      "date_time": "2026-02-20T12:30:00Z",
+      "complaint": "Повторный прием",
+      "diagnosis": "",
+      "prescription": "",
+      "status": "planned"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 35,
+    "fields": {
+      "doctor": 8,
+      "patient": 22,
+      "date_time": "2026-02-15T15:30:00Z",
+      "complaint": "Проблемы с агрессией",
+      "diagnosis": "",
+      "prescription": "",
+      "status": "planned"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 36,
+    "fields": {
+      "doctor": 6,
+      "patient": 21,
+      "date_time": "2026-02-13T11:30:00Z",
+      "complaint": "Съел 50 кг рыбы за раз.",
+      "diagnosis": "Это нормально для его вида.",
+      "prescription": "Больше физической активности",
+      "status": "completed"
+    }
+  }
+]
