@@ -144,6 +144,8 @@ docker-compose exec web python manage.py createsuperuser
 ```text
 vet_clinic/
 ├── clinic/                  # Основное приложение Django
+│   ├── fixtures/            # Тестовые данные для базы данных
+│   │   └── initial_data.json
 │   ├── migrations/          # Файлы миграций базы данных
 │   ├── static/clinic/css/   # Статические файлы
 │   │   └── style.css        # Кастомные стили (Glassmorphism)
