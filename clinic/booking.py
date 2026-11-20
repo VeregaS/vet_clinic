@@ -1,8 +1,9 @@
+import json
 from datetime import date, datetime
 from functools import partial
 
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, connection, transaction
 from django.utils import timezone
 
 from .constants import TIME_CHOICES
@@ -47,6 +48,14 @@ def book_appointment(
             ):
                 raise ValidationError("Врач больше не принимает пациентов.")
             when = clinic_slot(day, time_slot)
+            # Different doctors can register the same new patient concurrently.
+            identity = json.dumps(
+                [owner_name, owner_phone, pet_name], ensure_ascii=False
+            )
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "SELECT pg_advisory_xact_lock(hashtextextended(%s, 0))", [identity]
+                )
             patients = list(
                 Patient.objects.filter(
                     name=pet_name, owner_name=owner_name, owner_phone=owner_phone

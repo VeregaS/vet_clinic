@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
 from threading import Barrier
+from time import sleep
 from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
@@ -45,6 +46,30 @@ class BookingTests(TransactionTestCase):
             self.assertCountEqual(pool.map(run, ["First", "Second"]), [True, False])
         self.assertEqual(Appointment.objects.count(), 1)
         self.assertEqual(Patient.objects.count(), 1)
+
+    def test_concurrent_first_visits_share_one_patient(self):
+        doctors = [self.doctor, Doctor.objects.create(full_name="B")]
+        start = Barrier(2)
+        create = Patient.objects.create
+
+        def delayed_insert(**values):
+            # Widen the read-before-insert window without synchronizing inside a lock.
+            sleep(0.25)
+            return create(**values)
+
+        def reserve(doctor):
+            close_old_connections()
+            try:
+                start.wait(timeout=10)
+                return book_appointment(**dict(self.data, doctor=doctor)).patient_id
+            finally:
+                connections.close_all()
+
+        with patch.object(Patient.objects, "create", side_effect=delayed_insert):
+            with ThreadPoolExecutor(max_workers=2) as pool:
+                ids = list(pool.map(reserve, doctors))
+        self.assertEqual(ids[0], ids[1])
+        self.assertEqual(Appointment.objects.count(), 2)
 
     def test_cancel_then_rebook(self):
         first = book_appointment(**self.data)
