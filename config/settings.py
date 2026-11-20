@@ -32,7 +32,9 @@ def required(name):
 
 SECRET_KEY = required("SECRET_KEY")
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
-ALLOWED_HOSTS = [host.strip() for host in required("ALLOWED_HOSTS").split(",") if host.strip()]
+ALLOWED_HOSTS = [
+    host.strip() for host in required("ALLOWED_HOSTS").split(",") if host.strip()
+]
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "doctor_dashboard"
 LOGOUT_REDIRECT_URL = "home"

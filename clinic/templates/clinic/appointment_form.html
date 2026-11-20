@@ -33,6 +33,7 @@
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
+                    {{ form.errors }}
 
                     <div class="mb-4">
                         <label class="form-label fw-bold">Статус</label>

@@ -24,7 +24,7 @@
             <i class="bi bi-hospital"></i> Доктор Котов <span class="badge bg-secondary py-2">Staff</span>
         </a>
 
-        <div class="collapse navbar-collapse">
+        <div class="navbar-nav flex-wrap flex-row align-items-center gap-3">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'doctor_dashboard' %} active {% endif %}"
@@ -40,7 +40,7 @@
                 </li>
             </ul>
 
-            <ul class="navbar-nav ms-auto">
+            {% if perms.clinic.manage_clinic %}<ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle"></i>
@@ -51,12 +51,13 @@
                         {% endif %}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><h6 class="dropdown-header">Сменить пользователя:</h6></li>
+                        <li><h6 class="dropdown-header">Фильтр расписания:</h6></li>
+                        <li><form method="post" action="{% url 'set_doctor' 0 %}">{% csrf_token %}<button class="dropdown-item">Все врачи</button></form></li>
                         {% for doc in doctors_list %}
                             <li>
-                                <a class="dropdown-item" href="{% url 'set_doctor' doc.id %}">
-                                    {{ doc.full_name }}
-                                </a>
+                                <form action="{% url 'set_doctor' doc.id %}" method="post">{% csrf_token %}
+                                    <button class="dropdown-item">{{ doc.full_name }}</button>
+                                </form>
                             </li>
                         {% endfor %}
                         <li><hr class="dropdown-divider"></li>
@@ -67,7 +68,8 @@
                         </li>
                     </ul>
                 </li>
-            </ul>
+            </ul>{% endif %}
+            <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn btn-outline-light">Выйти</button></form>
         </div>
     </div>
 </nav>
@@ -80,7 +82,7 @@
     document.addEventListener("DOMContentLoaded", function () {
         var phoneInput = document.getElementById('phone-mask') || document.getElementById('id_owner_phone');
 
-        if (phoneInput) {
+        if (phoneInput && window.IMask) {
             var maskOptions = {
                 mask: '+{7} (000) 000-00-00'
             };
@@ -88,7 +90,7 @@
         }
     });
 </script>
-<div class="modal fade" id="addDoctorModal" tabindex="-1" aria-hidden="true">
+{% if perms.clinic.manage_clinic %}<div class="modal fade" id="addDoctorModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 
@@ -123,5 +125,6 @@
     </div>
   </div>
 </div>
+{% endif %}
 </body>
 </html>
