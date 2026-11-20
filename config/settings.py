@@ -20,12 +20,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+from django.core.exceptions import ImproperlyConfigured
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = ["0.0.0.0", "localhost", "127.0.0.1", "*"]
+def required(name):
+    value = os.environ.get(name)
+    if not value:
+        raise ImproperlyConfigured(f"Set {name} in the environment")
+    return value
+
+
+SECRET_KEY = required("SECRET_KEY")
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+ALLOWED_HOSTS = [host.strip() for host in required("ALLOWED_HOSTS").split(",") if host.strip()]
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "doctor_dashboard"
+LOGOUT_REDIRECT_URL = "home"
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 
 
 # Application definition
@@ -76,11 +87,11 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DB_NAME", "vetclinic_db"),
-        "USER": os.environ.get("DB_USER", "postgres"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", "postgres"),
-        "HOST": os.environ.get("DB_HOST", "db"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
+        "NAME": required("DB_NAME"),
+        "USER": required("DB_USER"),
+        "PASSWORD": required("DB_PASSWORD"),
+        "HOST": required("DB_HOST"),
+        "PORT": required("DB_PORT"),
     }
 }
 
@@ -107,9 +118,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "ru-ru"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = os.environ.get("CLINIC_TIME_ZONE", "Europe/Moscow")
 
 USE_I18N = True
 
