@@ -60,6 +60,7 @@
 
                     <form method="post">
                         {% csrf_token %}
+                        {{ form.non_field_errors }} {{ form.doctor.errors }} {{ form.pet_name.errors }} {{ form.pet_species.errors }} {{ form.owner_name.errors }} {{ form.complaint.errors }}
 
                         <div class="form-floating mb-3">
                             {{ form.owner_name }}

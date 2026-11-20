@@ -1,10 +1,10 @@
-import re
-from datetime import datetime
-
 from django import forms
+from django.core.exceptions import ValidationError
 
+from .booking import clinic_slot
 from .constants import SPECIES_CHOICES, TIME_CHOICES
 from .models import Appointment, Doctor, Patient
+from .phones import normalize_phone
 
 
 class AppointmentForm(forms.ModelForm):
@@ -71,74 +71,23 @@ class AppointmentForm(forms.ModelForm):
             ),
         }
 
-    def save(self, commit=True):
-        appointment = super().save(commit=False)
-
-        chosen_date = self.cleaned_data["date"]
-        chosen_time_str = self.cleaned_data["time_slot"]
-
-        chosen_time = datetime.strptime(chosen_time_str, "%H:%M").time()
-        appointment.date_time = datetime.combine(chosen_date, chosen_time)
-
-        if commit:
-            appointment.save()
-
-        return appointment
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["doctor"].queryset = Doctor.objects.filter(is_active=True).order_by(
+            "full_name"
+        )
 
     def clean_owner_phone(self):
-        phone = self.cleaned_data["owner_phone"]
-
-        digits = re.sub(r"\D", "", phone)
-
-        if len(digits) == 11:
-            if digits.startswith("8"):
-                digits = "7" + digits[1:]
-            elif digits.startswith("7"):
-                pass
-            else:
-                self.add_error(
-                    "owner_phone",
-                    "Номер должен начинаться с +7 или 8",
-                )
-        else:
-            self.add_error(
-                "owner_phone",
-                "Номер телефона должен содержать 11 цифр",
-            )
-
-        return f"+{digits}"
+        return normalize_phone(self.cleaned_data["owner_phone"])
 
     def clean(self):
-        cleaned_data = super().clean()
-        doctor = cleaned_data.get("doctor")
-        date = cleaned_data.get("date")
-        time_str = cleaned_data.get("time_slot")
-        date_time = None
-
-        if date and time_str:
-            t_obj = datetime.strptime(time_str, "%H:%M").time()
-            date_time = datetime.combine(date, t_obj)
-
-        if not doctor or not date_time:
-            return
-
-        if date_time < datetime.now():
-            self.add_error(
-                "date",
-                "Невозможно записаться на прошлую дату!",
-            )
-
-        collision = Appointment.objects.filter(
-            doctor=doctor, date_time=date_time
-        ).exists()
-
-        if collision:
-            self.add_error(
-                "time_slot",
-                "На это время врач уже занят! Пожалуйста, выберите другой час.",
-            )
-
-        return cleaned_data
+        data = super().clean()
+        if data.get("date") and data.get("time_slot"):
+            try:
+                clinic_slot(data["date"], data["time_slot"])
+            except ValidationError as error:
+                self.add_error("date", error)
+        return data
 
 
 class PatientForm(forms.ModelForm):
@@ -174,27 +123,7 @@ class PatientForm(forms.ModelForm):
         }
 
     def clean_owner_phone(self):
-        phone = self.cleaned_data["owner_phone"]
-
-        digits = re.sub(r"\D", "", phone)
-
-        if len(digits) == 11:
-            if digits.startswith("8"):
-                digits = "7" + digits[1:]
-            elif digits.startswith("7"):
-                pass
-            else:
-                self.add_error(
-                    "owner_phone",
-                    "Номер должен начинаться с +7 или 8",
-                )
-        else:
-            self.add_error(
-                "owner_phone",
-                "Номер телефона должен содержать 11 цифр",
-            )
-
-        return f"+{digits}"
+        return normalize_phone(self.cleaned_data["owner_phone"])
 
 
 class DoctorAppointmentForm(forms.ModelForm):
