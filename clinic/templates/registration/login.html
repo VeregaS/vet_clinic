@@ -1,0 +1,15 @@
+{% extends "clinic/public_form.html" %}
+{% block title %}Вход для персонала — Доктор Котов{% endblock %}
+{% block form_title %}Вход для персонала{% endblock %}
+{% block fields %}
+<form method="post">{% csrf_token %}
+{% if form.non_field_errors %}<div class="text-danger mb-3" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+<div class="form-floating mb-3">
+<input class="form-control" id="id_username" name="username" value="{{ form.username.value|default_if_none:'' }}" type="text" autocomplete="username" placeholder="Логин" required>
+<label for="id_username">Логин</label>{{ form.username.errors }}</div>
+<div class="form-floating mb-4">
+<input class="form-control" id="id_password" name="password" type="password" autocomplete="current-password" placeholder="Пароль" required>
+<label for="id_password">Пароль</label>{{ form.password.errors }}</div>
+<input type="hidden" name="next" value="{{ next }}">
+<button type="submit" class="btn btn-glass w-100">Войти</button>
+</form>{% endblock %}

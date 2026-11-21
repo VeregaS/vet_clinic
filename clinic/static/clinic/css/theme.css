@@ -1,0 +1,24 @@
+@font-face {
+    font-family: "Golos Text";
+    src: url("../fonts/GolosText.ttf") format("truetype");
+    font-weight: 400 900;
+}
+
+:root {
+    --font-ui: "Golos Text", sans-serif;
+    --ink: #202e40;
+    --muted: #526174;
+    --surface: #fff;
+    --surface-soft: #f5f8fc;
+    --line: #d7e1ed;
+    --line-strong: #a7b8cc;
+    --field-border: #8799ad;
+    --accent: #205da6;
+    --accent-hover: #174880;
+    --accent-soft: #eaf2fc;
+    --accent-highlight: #d9e8fa;
+    --brand-underline: #87aed9;
+    --booking-gradient-end: #c5dbf3;
+    --success: #166140;
+    --error: #9c3028;
+}

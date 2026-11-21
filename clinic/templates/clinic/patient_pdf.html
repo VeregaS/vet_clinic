@@ -1,178 +1,77 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Карта пациента: {{ patient.name }}</title>
-    <style>
-        @page {
-            size: A4;
-            margin: 2cm;
-        }
+<meta charset="UTF-8">
+<title>Ветеринарная карта № {{ patient.pk }} — {{ patient.name }}</title>
+<style>
+@import url("css/brand.css");
+@page {
+    size: A4;
+    margin: 18mm 19mm 21mm;
+    @bottom-left {
+        content: "Карта № {{ patient.pk }}";
+        font: 9pt var(--font-ui); color: var(--muted);
+    }
+    @bottom-right {
+        content: "Страница " counter(page) " из " counter(pages);
+        font: 9pt var(--font-ui); color: var(--muted);
+    }
+}
+body { margin: 0; color: var(--ink); font: 10pt/1.45 var(--font-ui); overflow-wrap: anywhere; }
+.masthead { padding-bottom: 3mm; border-bottom: .75pt solid var(--line-strong); margin-bottom: 6mm; }
+.brand { position: relative; z-index: 0; font-size: 18pt; margin-bottom: 2mm; }
+.issued { float: right; margin-top: 3mm; font-size: 9pt; color: var(--muted); }
+h1 { margin: 0 0 5mm; font-size: 20pt; line-height: 1.2; }
+h2 { margin: 8mm 0 4mm; padding-bottom: 2mm; border-bottom: .75pt solid var(--line-strong); font-size: 14pt; }
+h1, h2, h3, .visit-head { break-after: avoid; }
+.identity { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.identity td { width: 50%; vertical-align: top; padding: 2mm 4mm 2mm 0; }
+.caption { display: block; color: var(--muted); font-size: 9pt; }
+section + section { border-top: .5pt solid var(--line); padding-top: 4mm; margin-top: 5mm; }
+h3 { margin: 0; font-size: 12pt; }
+.visit-meta { margin: 2mm 0 4mm; }
+.visit-meta td { padding: 0; vertical-align: top; }
+.visit-meta td:first-child { width: 66.6667%; }
+.visit-meta td + td { padding-left: 4mm; }
+.specialty { color: var(--muted); font-size: 9pt; }
+.completed { color: var(--success); font-weight: bold; }
 
-        body {
-            font-family: sans-serif;
-            font-size: 14px;
-            color: #333;
-            line-height: 1.5;
-        }
-
-        .header {
-            border-bottom: 2px solid #0d6efd;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .clinic-name {
-            font-size: 24px;
-            font-weight: bold;
-            color: #0d6efd;
-            text-transform: uppercase;
-        }
-        .doc-meta {
-            text-align: right;
-            font-size: 12px;
-            color: #777;
-        }
-
-        .patient-card {
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-        .info-row {
-            margin-bottom: 10px;
-        }
-        .label {
-            font-weight: bold;
-            color: #555;
-            width: 150px;
-            display: inline-block;
-        }
-
-        h2 {
-            font-size: 18px;
-            color: #333;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 5px;
-            margin-top: 30px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        th, td {
-            border: 1px solid #eee;
-            padding: 10px;
-            text-align: left;
-            vertical-align: top;
-        }
-        th {
-            background-color: #0d6efd;
-            color: white;
-            font-weight: bold;
-            font-size: 12px;
-        }
-        td {
-            font-size: 13px;
-        }
-        .date-col { width: 15%; font-weight: bold; }
-        .doctor-col { width: 25%; }
-
-        .footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            text-align: center;
-            font-size: 10px;
-            color: #999;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
-        }
-    </style>
+.visit-meta, .notes { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.notes th, .notes td { text-align: left; vertical-align: top; padding: 0 0 1mm; }
+.notes th + th, .notes td + td { padding-left: 4mm; }
+.notes th { color: var(--muted); font-size: 9pt; }
+.notes td { white-space: pre-line; orphans: 2; widows: 2; }
+</style>
 </head>
 <body>
-
-    <div class="header">
-        <div>
-            <div class="clinic-name">Доктор Котов</div>
-            <div>Ветеринарная клиника</div>
-        </div>
-    </div>
-
-    <h1>Медицинская карта пациента</h1>
-
-    <div class="patient-card">
-        <div class="info-row">
-            <span class="label">Кличка:</span>
-            <strong>{{ patient.name }}</strong>
-        </div>
-        <div class="info-row">
-            <span class="label">Вид / Порода:</span>
-            {{ patient.get_species_display }} / {{ patient.breed|default:"-" }}
-        </div>
-        <div class="info-row">
-            <span class="label">Дата рождения:</span>
-            {{ patient.birth_date|date:"d.m.Y"|default:"Не указана" }}
-        </div>
-        <div class="info-row">
-            <span class="label">Владелец:</span>
-            {{ patient.owner_name }}
-        </div>
-        <div class="info-row">
-            <span class="label">Телефон:</span>
-            {{ patient.owner_phone }}
-        </div>
-    </div>
-
-    <h2>История посещений</h2>
-
-    {% if history %}
-    <table>
-        <thead>
-            <tr>
-                <th>Дата</th>
-                <th>Врач</th>
-                <th>Жалоба / Диагноз</th>
-                <th>Назначения</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for apt in history %}
-            <tr>
-                <td class="date-col">
-                    {{ apt.date_time|date:"d.m.Y" }}<br>
-                    <small style="color:#777">{{ apt.date_time|date:"H:i" }}</small>
-                </td>
-                <td class="doctor-col">
-                    {{ apt.doctor.full_name }}<br>
-                    <small>{{ apt.doctor.specialization }}</small>
-                </td>
-                <td>
-                    <strong>Жалоба:</strong> {{ apt.complaint }}<br>
-                    {% if apt.diagnosis %}
-                    <br><strong>Диагноз:</strong> {{ apt.diagnosis }}
-                    {% endif %}
-                </td>
-                <td>
-                    {{ apt.prescription|linebreaksbr|default:"-" }}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-        <p style="color: #777; font-style: italic;">Записей о приемах пока нет.</p>
-    {% endif %}
-
-    <div class="footer">
-        Документ сформирован автоматически {{ now|date:"d.m.Y H:i" }}. Ветклиника доктора Котова.
-    </div>
-
+<header class="masthead">
+<span class="issued">Дата формирования {% now "d.m.Y" %}</span>
+<div class="brand hero-title clinic-brand">{% include "clinic/brand.html" %}</div>
+<div>Ветеринарная клиника</div>
+</header>
+<h1>Ветеринарная карта № {{ patient.pk }}</h1>
+<table class="identity">
+<tr><td><span class="caption">Кличка пациента</span><strong>{{ patient.name }}</strong></td>
+<td><span class="caption">Владелец</span>{{ patient.owner_name }}</td></tr>
+<tr><td><span class="caption">Вид{% if patient.breed %}, порода{% endif %}</span>{{ patient.species }}{% if patient.breed %}, {{ patient.breed }}{% endif %}</td>
+<td><span class="caption">Телефон владельца</span>{{ patient.owner_phone }}</td></tr>
+<tr><td colspan="2"><span class="caption">Дата рождения</span>{{ patient.birth_date|date:"d.m.Y"|default:"Не указана" }}</td></tr>
+</table>
+<h2>Записи приёмов</h2>
+{% for apt in history %}
+<section>
+<header class="visit-head">
+<h3>Прием от {{ apt.date_time|date:"d.m.Y, H:i" }}</h3>
+<table class="visit-meta"><tr>
+<td><span class="caption">Врач</span>{{ apt.doctor.full_name }}{% if apt.doctor.specialization %}<span class="specialty">, {{ apt.doctor.specialization }}</span>{% endif %}</td>
+<td><span class="caption">Статус</span><span{% if apt.status == 'completed' %} class="completed"{% endif %}>{{ apt.get_status_display }}</span></td>
+</tr></table>
+</header>
+{% if apt.complaint or apt.diagnosis or apt.prescription %}<table class="notes">
+<thead><tr><th scope="col">Жалобы</th><th scope="col">Диагноз</th><th scope="col">Назначения</th></tr></thead>
+<tbody><tr><td>{{ apt.complaint|default:"—" }}</td><td>{{ apt.diagnosis|default:"—" }}</td><td>{{ apt.prescription|default:"—" }}</td></tr></tbody>
+</table>{% endif %}
+</section>
+{% empty %}<p>Записей о приёмах пока нет.</p>{% endfor %}
 </body>
 </html>

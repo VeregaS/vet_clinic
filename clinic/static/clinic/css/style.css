@@ -1,24 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+@import url("brand.css");
 
 body {
-    font-family: 'Nunito', sans-serif;
-    color: #4a5568;
+    font-family: var(--font-ui);
+    color: var(--ink);
     overflow-x: hidden;
     min-height: 100vh;
     position: relative;
 
-    background-color: #f0f4f8;
-    background-image:
-        radial-gradient(circle at 10% 20%, rgba(165, 243, 252, 0.6) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(216, 180, 254, 0.6) 0%, transparent 40%);
-
-    background-attachment: fixed;
-}
-
-@media (max-width: 768px) {
-    body {
-        background-attachment: scroll;
-    }
+    background-color: var(--surface-soft);
 }
 
 .main-container {
@@ -26,44 +15,25 @@ body {
     padding: 40px 0;
 }
 
-.hero-title {
-    font-weight: 800;
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    line-height: 1.1;
-    color: #2d3748;
+.booking-page {
+    background-image: linear-gradient(155deg, var(--surface-soft) 0%, var(--accent-soft) 42%, var(--booking-gradient-end) 100%);
 }
 
-.text-highlight {
-    color: #6366f1;
-    position: relative;
-    white-space: nowrap;
-}
-
-.text-highlight::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 12px;
-    bottom: 8px;
-    left: 0;
-    background: rgba(99, 102, 241, 0.15);
-    z-index: -1;
-    border-radius: 6px;
-}
+.hero-title { font-size: clamp(2.5rem, 5vw, 4rem); }
 
 .hero-subtitle {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #718096;
+    color: var(--muted);
 }
 
 .info-pill {
-    background: white;
+    background: var(--surface);
     padding: 8px 20px;
     border-radius: 50px;
     font-weight: 700;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    color: #6366f1;
+    color: var(--accent);
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -81,25 +51,25 @@ body {
 
 .form-floating > .form-control,
 .form-floating > .form-select {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: var(--surface-soft);
+    border: 1px solid var(--line);
     border-radius: 12px;
     height: 58px;
     font-weight: 600;
-    color: #2d3748;
+    color: var(--ink);
     padding-top: 30px;
 }
 
 .form-floating > label {
     background-color: transparent !important;
-    color: #a0aec0;
+    color: var(--muted);
     padding-left: 15px;
 }
 
 .form-control:focus, .form-select:focus {
-    background: white;
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    background: var(--surface);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-highlight);
 }
 
 .form-floating > .form-control:focus ~ label::after,
@@ -127,7 +97,7 @@ body {
 }
 
 .btn-glass {
-    background: #6366f1;
+    background: var(--accent);
     color: white;
     font-weight: 800;
     font-size: 1.1rem;
@@ -135,19 +105,29 @@ body {
     border-radius: 12px;
     border: none;
     transition: background-color 0.2s, transform 0.2s;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+    box-shadow: 0 4px 12px var(--accent-highlight);
 }
 
+.booking-submit { letter-spacing: .025em; }
+
 .btn-glass:hover {
-    background: #4f46e5;
+    background: var(--accent-hover);
     transform: translateY(-2px);
     color: white;
 }
 
 .custom-alert {
-    background: white;
+    background: var(--surface);
     border-radius: 12px;
-    color: #047857;
+    color: var(--success);
     font-weight: 700;
-    border-left: 5px solid #10b981;
+    border-left: 5px solid var(--success);
 }
+
+/* Keep form values, location and feedback selectable on the booking page. */
+.booking-page { -webkit-user-select: none; user-select: none; }
+.booking-page :is(input, textarea, select, option, .info-pill, .alert, .errorlist, a) {
+    -webkit-user-select: text;
+    user-select: text;
+}
+.booking-page .form-floating > label { color: var(--muted); }

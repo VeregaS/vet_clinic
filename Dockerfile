@@ -1,29 +1,7 @@
-FROM python:3.11-slim
-
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
+FROM python:3.11-bookworm@sha256:726d304906fa5eb468e5531e366548d1903286352f5adb54ef508ac01fbd80c6
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
-
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    python3-dev \
-    python3-pip \
-    python3-setuptools \
-    python3-wheel \
-    python3-cffi \
-    libcairo2 \
-    libpango-1.0-0 \
-    libpangocairo-1.0-0 \
-    libgdk-pixbuf-2.0-0 \
-    libffi-dev \
-    shared-mime-info \
-    libglib2.0-0 \
-    fonts-dejavu \
-    fonts-liberation \
-    && rm -rf /var/lib/apt/lists/*
-
+# The base image includes Pango and DejaVu for Cyrillic PDF output.
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
 COPY . .

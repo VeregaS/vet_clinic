@@ -1,7 +1,16 @@
+from django.conf import settings
 from django.db import models
 
 
 class Doctor(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="clinic_doctor",
+    )
+    is_active = models.BooleanField("Принимает пациентов", default=True)
     full_name = models.CharField("ФИО Врача", max_length=150)
     specialization = models.CharField("Специализация", max_length=100)
     phone = models.CharField("Телефон", max_length=20, blank=True)
@@ -13,6 +22,7 @@ class Doctor(models.Model):
     )
 
     class Meta:
+        permissions = [("manage_clinic", "Управление клиникой")]
         verbose_name = "Врач"
         verbose_name_plural = "Врачи"
 
@@ -46,10 +56,10 @@ class Appointment(models.Model):
         ("canceled", "Отменено"),
     ]
 
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, verbose_name="Врач")
+    doctor = models.ForeignKey(Doctor, on_delete=models.PROTECT, verbose_name="Врач")
     patient = models.ForeignKey(
         Patient,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         verbose_name="Пациент",
         related_name="history",
     )
@@ -64,7 +74,15 @@ class Appointment(models.Model):
     class Meta:
         verbose_name = "Запись на прием"
         verbose_name_plural = "Записи на прием"
-        ordering = ["-date_time"]
+        ordering = ["-date_time", "pk"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["doctor", "date_time"],
+                condition=models.Q(status__in=["planned", "completed"]),
+                name="clinic_unique_occupied_doctor_slot",
+                violation_error_message="Время уже занято.",
+            )
+        ]
 
     def __str__(self):
         return f"{self.date_time.strftime('%d.%m %H:%M')} - {self.patient.name}"
