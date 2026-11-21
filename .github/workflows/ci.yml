@@ -21,6 +21,10 @@ jobs:
         run: |
           cp .env.example .env
           sed -i "s/^SECRET_KEY=$/SECRET_KEY=$(openssl rand -hex 32)/;s/^DB_PASSWORD=$/DB_PASSWORD=$(openssl rand -hex 24)/" .env
+      - name: Audit Python dependencies
+        run: |
+          pip install pip-audit==2.10.1
+          pip-audit --no-deps --disable-pip -r requirements.txt
       - name: Build
         run: docker compose build web
       - name: Check and migrate

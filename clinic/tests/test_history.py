@@ -57,6 +57,7 @@ class WorkflowTests(TestCase):
         pdf = self.client.get(reverse("patient_pdf", args=[visit.patient_id]))
         self.assertEqual(pdf["Content-Type"], "application/pdf")
         self.assertTrue(pdf.content.startswith(b"%PDF-"))
+        self.assertIn("no-store", pdf["Cache-Control"])
         for obj in [visit.patient, self.doc]:
             with self.assertRaises(ProtectedError):
                 obj.delete()

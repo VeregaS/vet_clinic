@@ -1,5 +1,19 @@
 from django.conf import settings
+from django.core.validators import MaxLengthValidator
 from django.db import models
+
+
+class RequestBudget(models.Model):
+    client_key = models.CharField(max_length=64)
+    window_start = models.BigIntegerField(db_index=True)
+    attempts = models.PositiveIntegerField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["client_key", "window_start"], name="clinic_budget_key_window"
+            )
+        ]
 
 
 class Doctor(models.Model):
@@ -64,9 +78,18 @@ class Appointment(models.Model):
         related_name="history",
     )
     date_time = models.DateTimeField("Дата и время приема")
-    complaint = models.TextField("Жалоба", blank=True)
-    diagnosis = models.TextField("Диагноз", blank=True, default="")
-    prescription = models.TextField("Назначения / Рецепт", blank=True, default="")
+    complaint = models.TextField(
+        "Жалоба", blank=True, validators=[MaxLengthValidator(2000)]
+    )
+    diagnosis = models.TextField(
+        "Диагноз", blank=True, default="", validators=[MaxLengthValidator(4000)]
+    )
+    prescription = models.TextField(
+        "Назначения / Рецепт",
+        blank=True,
+        default="",
+        validators=[MaxLengthValidator(4000)],
+    )
     status = models.CharField(
         "Статус", max_length=20, choices=STATUS_CHOICES, default="planned"
     )

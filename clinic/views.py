@@ -5,7 +5,7 @@ import weasyprint
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.core.exceptions import ValidationError
+from django.core.exceptions import BadRequest, ValidationError
 from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.http import HttpResponse
@@ -14,6 +14,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.http import content_disposition_header
+from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView
 
@@ -105,6 +106,7 @@ class PatientUpdateView(DoctorsContext, PermissionRequiredMixin, UpdateView):
 
 
 @login_required
+@never_cache
 def patient_pdf_view(request, pk):
     patient = get_object_or_404(visible_patients(request.user), pk=pk)
     history = visible_appointments(request.user).filter(patient=patient)
@@ -148,6 +150,8 @@ class PatientListView(DoctorsContext, ListView):
         qs = visible_patients(self.request.user).order_by("name", "pk")
         query = self.request.GET.get("q")
         if query:
+            if len(query) > 150:
+                raise BadRequest("Search query is too long.")
             qs = qs.filter(
                 Q(name__icontains=query)
                 | Q(owner_name__icontains=query)
@@ -163,6 +167,7 @@ class HomeView(FormView):
 
     def form_valid(self, form):
         data = dict(form.cleaned_data)
+        data.pop("company_website")
         data["day"] = data.pop("date")
         try:
             book_appointment(**data)
