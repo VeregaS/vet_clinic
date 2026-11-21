@@ -8,6 +8,9 @@ from .phones import normalize_phone
 
 
 class AppointmentForm(forms.ModelForm):
+    company_website = forms.CharField(
+        required=False, max_length=100, widget=forms.HiddenInput
+    )
     owner_name = forms.CharField(
         max_length=50,
         help_text="Введите своё ФИО",
@@ -79,6 +82,11 @@ class AppointmentForm(forms.ModelForm):
 
     def clean_owner_phone(self):
         return normalize_phone(self.cleaned_data["owner_phone"])
+
+    def clean_company_website(self):
+        if self.cleaned_data["company_website"]:
+            raise ValidationError("Не удалось отправить форму. Заполните её заново.")
+        return ""
 
     def clean(self):
         data = super().clean()

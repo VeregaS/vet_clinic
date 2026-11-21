@@ -4,6 +4,7 @@
 .git
 .superpowers
 .venv
+staticfiles
 __pycache__
 *.pyc
 *.log

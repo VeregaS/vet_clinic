@@ -8,6 +8,8 @@ db.sqlite3
 media
 
 .env
+.env.*
+!.env.example
 
 venv/
 env/
@@ -19,3 +21,4 @@ env/
 .superpowers/
 
 postgres_data/
+staticfiles/

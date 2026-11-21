@@ -1,4 +1,5 @@
 {% extends "clinic/public_form.html" %}
+{% load static %}
 {% block intro %}<p class="hero-subtitle mb-4">
                     Когда питомцу нужен врач, запишитесь на приём здесь.
                 </p>
@@ -11,6 +12,7 @@
 {% block form_title %}Онлайн запись{% endblock %}
 {% block fields %}<form method="post">
                         {% csrf_token %}
+                        {{ form.company_website }} {{ form.company_website.errors }}
                         {{ form.non_field_errors }} {{ form.doctor.errors }} {{ form.pet_name.errors }} {{ form.pet_species.errors }} {{ form.owner_name.errors }} {{ form.complaint.errors }}
 
                         <div class="form-floating mb-3">
@@ -70,17 +72,7 @@
                             Подтвердить запись
                         </button>
                     </form>{% endblock %}
-{% block scripts %}<script src="https://unpkg.com/imask"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var phoneInput = document.getElementById('phone-mask');
-
-        if (phoneInput) {
-            var maskOptions = {
-                mask: '+{7} (000) 000-00-00'
-            };
-            var mask = IMask(phoneInput, maskOptions);
-        }
-    });
-</script>
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/imask@7.6.1/dist/imask.min.js" integrity="sha384-UO8YwPv//GjwHj93ZlwXcDNjv3BSxdBFUB2jtiOuL3d/a0kS9E8sYvHjTBkQI8u8" crossorigin="anonymous" defer></script>
+<script src="{% static 'clinic/js/phone-mask.js' %}" defer></script>
 {% endblock %}
