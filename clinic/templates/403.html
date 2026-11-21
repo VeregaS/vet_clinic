@@ -1,0 +1,18 @@
+{% extends "clinic/public_form.html" %}
+{% block title %}Доступ ограничен — Доктор Котов{% endblock %}
+{% block form_title %}Доступ ограничен{% endblock %}
+{% block fields %}
+<p>У вашего аккаунта нет прав на эту страницу.</p>
+<p>Если кабинет не открывается после входа, попросите администратора проверить доступ: для врача нужна привязка к активному профилю врача, для администратора клиники — членство в группе «Администраторы клиники».</p>
+<div class="d-grid gap-2">
+    {% if request.user.is_authenticated %}
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-glass w-100">Выйти из аккаунта</button>
+    </form>
+    {% else %}
+    <a class="btn btn-glass" href="{% url 'login' %}">Войти в кабинет</a>
+    {% endif %}
+    <a class="text-center" href="{% url 'home' %}">На главную</a>
+</div>
+{% endblock %}

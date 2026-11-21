@@ -136,14 +136,14 @@ class DoctorAppointmentForm(forms.ModelForm):
             "status": "Статус визита",
         }
         widgets = {
-            "diagnosis": forms.TextInput(
+            "diagnosis": forms.Textarea(
                 attrs={
                     "class": "form-control",
                     "rows": 3,
                     "placeholder": "Опишите диагноз...",
                 }
             ),
-            "prescription": forms.TextInput(
+            "prescription": forms.Textarea(
                 attrs={
                     "class": "form-control",
                     "rows": 4,

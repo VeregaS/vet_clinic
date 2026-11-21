@@ -112,6 +112,15 @@ class AccessTests(TestCase):
             self.client.get(reverse("set_doctor", args=[self.second.pk])).status_code,
             405,
         )
-        user = get_user_model().objects.create_user("unlinked")
-        self.client.force_login(user)
-        self.assertEqual(self.client.get(reverse("doctor_dashboard")).status_code, 403)
+
+    def test_login_without_clinic_role_explains_denied_access(self):
+        get_user_model().objects.create_user("unlinked", password="demo-only")
+        response = self.client.post(
+            reverse("login"),
+            {"username": "unlinked", "password": "demo-only"},
+            follow=True,
+        )
+        self.assertEqual(response.redirect_chain, [(reverse("doctor_dashboard"), 302)])
+        self.assertTemplateUsed(response, "403.html")
+        self.assertContains(response, "активному профилю врача", status_code=403)
+        self.assertContains(response, "Выйти из аккаунта", status_code=403)
