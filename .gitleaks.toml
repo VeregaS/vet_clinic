@@ -1,0 +1,18 @@
+[extend]
+useDefault = true
+
+[[rules]]
+id = "vetclinic-django-insecure-key"
+description = "Django development signing key committed as a literal"
+regex = '''(?i)\b(django-insecure-[a-z0-9!@#$%^&*()+_=-]{20,})'''
+secretGroup = 1
+
+[[rules]]
+id = "vetclinic-db-password-literal"
+description = "PostgreSQL password stored directly in a config file"
+regex = '''(?im)\b(?:POSTGRES_PASSWORD|DB_PASSWORD|DB_OWNER_PASSWORD)["']?[ \t]*[:=][ \t]*["']?([a-z0-9_!@%+.\-]{8,})\b'''
+secretGroup = 1
+
+[[rules.allowlists]]
+description = "Marker produced by the history cleanup"
+regexes = ['''^REDACTED_EXAMPLE_ONLY$''']
