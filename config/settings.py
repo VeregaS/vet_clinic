@@ -37,7 +37,7 @@ ALLOWED_HOSTS = [
 ]
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "doctor_dashboard"
-LOGOUT_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "login"
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 
 

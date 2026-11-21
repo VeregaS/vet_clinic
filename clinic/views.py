@@ -1,4 +1,5 @@
 import datetime
+from pathlib import Path
 
 import weasyprint
 from django.contrib import messages
@@ -114,7 +115,8 @@ def patient_pdf_view(request, pk):
     response["Content-Disposition"] = content_disposition_header(
         False, f"card_{patient.pk}.pdf"
     )
-    weasyprint.HTML(string=html).write_pdf(response)
+    assets = Path(__file__).resolve().parent / "static" / "clinic"
+    weasyprint.HTML(string=html, base_url=assets.as_uri() + "/").write_pdf(response)
     return response
 
 

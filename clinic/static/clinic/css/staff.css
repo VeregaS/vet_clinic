@@ -1,0 +1,99 @@
+* { box-sizing:border-box }
+html:has(body.staff) { scrollbar-gutter:stable }
+body.staff {
+  margin:0; min-height:100vh; background:var(--surface); color:var(--ink);
+  font:400 16px/1.5 var(--font-ui);
+}
+.staff a { color:var(--accent); text-underline-offset:3px }
+.staff button,.staff input,.staff select,.staff textarea { font:inherit; color:inherit }
+.staff :focus-visible { outline:3px solid var(--accent); outline-offset:3px }
+.masthead { min-height:64px; display:flex; gap:36px; align-items:center; flex-wrap:wrap; padding:8px max(20px,calc((100% - 1152px)/2)); border-bottom:1px solid var(--line) }
+.clinic-brand { font-size:26px; isolation:isolate; white-space:nowrap }
+.masthead form { margin-left:auto }
+.masthead nav,.day-tabs { position:relative; display:flex; flex-wrap:wrap; gap:20px }
+.masthead nav a,.day-tabs a,.exit { font-weight:650; display:inline-flex; align-items:center; min-height:40px; text-decoration:none; color:var(--muted); font-size:15px; padding:0 2px; border:0; border-bottom:2px solid transparent; background:var(--surface) }
+.exit,.doctor-filter summary,.staff button { cursor:pointer }
+.masthead nav [aria-current],.day-tabs [aria-current] { color:var(--ink); border-color:var(--accent) }
+nav.moving-line [aria-current] { border-color:transparent }
+.moving-line::after { content:""; position:absolute; left:0; top:0; pointer-events:none; height:2px; width:var(--bar-width,0); background:var(--accent); transform:translate(var(--bar-x,0),var(--bar-y,0)) }
+.nav-interacting::after { transition:transform 145ms ease-out,width 145ms ease-out }
+@media(prefers-reduced-motion:reduce){.moving-line::after{transition:none}}
+.desk { width:min(100% - 40px,1152px); margin:30px auto 60px }
+.desk h1,.desk h2,.desk h3 { color:var(--ink); line-height:1.23; overflow-wrap:anywhere }
+.desk h1 { margin:0 0 20px; font-size:clamp(25px,2.4vw,32px); font-weight:800 }
+.desk h2 { margin:0 0 14px; font-size:20px }
+.desk h3 { margin:0; font-size:16px }
+.desk-title,.chart-heading,.chart-entry header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px }
+.desk-title h1,.chart-heading h1 { margin:0 }
+.day-tabs { margin:10px 0 18px; border-bottom:1px solid var(--line) }
+.desk .date-line,.list-head { margin:18px 0 0; background:var(--surface-soft); padding:8px 12px; font-size:14px; font-weight:700 }
+.visit,.patient-row { display:grid; align-items:center; gap:14px; border-bottom:1px solid var(--line); padding:11px 12px; overflow-wrap:anywhere }
+.visit { grid-template-columns:4rem minmax(110px,1fr) minmax(140px,1.2fr) minmax(100px,1.2fr) 110px 5.5rem }
+.patient-row { grid-template-columns:1fr 1.25fr 1fr }
+.visit time { font-weight:800; font-variant-numeric:tabular-nums }
+.pet { font-weight:750 }.pet,.visit-open,.chart-download { text-decoration:none }
+
+.visit small,.patient-row small { display:block; color:var(--muted); font-size:14px }
+.visit-status,.back-link,.chart-entry header span,.chart-doctor { color:var(--muted); font-size:14px }
+.completed-note,.visit-status.completed { color:var(--success)!important; font-weight:750 }
+.completed-note::before { content:"✓"; margin-right:5px }
+.visit-open,.chart-download,.doctor-filter summary { display:inline-flex; align-items:center; justify-content:center; min-height:36px; padding:4px 12px; border:1px solid var(--line); border-radius:7px; background:var(--surface) }
+.doctor-filter { position:relative }
+.doctor-filter>div { position:absolute; right:0; z-index:2; width:max-content; max-width:85vw; max-height:48vh; overflow:auto; padding:6px; border:1px solid var(--line); background:var(--surface); border-radius:8px }
+.doctor-filter button { width:100%; text-align:left; padding:8px 12px; background:var(--surface); border:0 }
+.doctor-filter button:hover { background:var(--surface-soft) }
+.back-link { display:inline-block; margin-bottom:12px }
+.chart-heading { margin-bottom:20px }.chart-heading p,.chart-doctor { margin:4px 0 }
+.chart-grid { display:grid; grid-template-columns:minmax(210px,280px) minmax(0,1fr); gap:24px; align-items:start }
+.chart-pane { padding:20px; border:1px solid var(--line); border-radius:12px; overflow-wrap:anywhere }
+.chart-pane dl { margin:14px 0 }.chart-pane dt,.field-row label { font-weight:650; font-size:14px }
+.chart-pane dt { color:var(--muted) }.chart-pane dd { margin:2px 0 12px }
+.chart-entry { padding:16px 0 0; border-top:1px solid var(--line) }
+.record-form { width:min(100%,580px) }.field-row { margin-bottom:14px }.field-row label { display:block; margin-bottom:4px }
+.record-form :is(input,textarea,select),.search-row input { width:100%; min-width:0; min-height:40px; border:1px solid var(--field-border); background:var(--surface); border-radius:7px; padding:7px 10px }
+.record-form textarea { resize:vertical }.record-form button,.search-row button { min-height:40px; padding:6px 16px; background:var(--accent); color:white; border:0; border-radius:7px; font-weight:700 }
+.search-row { max-width:580px; display:flex; gap:8px; margin:0 0 18px }.empty { color:var(--muted); padding:14px 0 }
+.errorlist { color:var(--error) }.desk nav[aria-label="Страницы"] { display:flex; align-items:center; gap:16px; margin-top:18px }
+@media(max-width:850px){
+  .visit { grid-template-columns:4rem minmax(0,1fr) auto; gap:5px 12px }
+  .visit time { grid-column:1; grid-row:1 }.visit>div { grid-column:2 }
+  .visit-status { grid-column:3; grid-row:1 }.visit-open { grid-column:3; grid-row:2; justify-self:end }
+  .chart-grid { grid-template-columns:1fr }
+}
+@media(max-width:600px){
+  .desk { width:calc(100% - 32px); margin-top:20px }
+  .masthead { padding:10px 16px 0; gap:4px 12px }.masthead nav { order:3; width:100%; gap:14px }
+  .clinic-brand { font-size:23px }.chart-pane { padding:16px }
+  .patient-row { grid-template-columns:1fr; gap:2px }.list-head { display:none }
+  .visit { grid-template-columns:3.2rem minmax(0,1fr); padding-inline:2px }
+  .visit-status,.visit-open { grid-column:2; grid-row:auto; justify-self:start }
+}
+.schedule-labels { color:var(--muted); font-size:14px; font-weight:650; border-bottom:0; padding-block:4px }.schedule-labels + .date-line { margin-top:4px } @media(max-width:850px){.schedule-labels{display:none}}
+
+.schedule h1 { font-weight: 650; }
+.schedule .day-tabs { margin: 14px 0 24px; }
+.schedule .day-tabs a, .schedule-labels { font-weight: 500; }
+.schedule .date-line { margin-top: 24px; padding-block: 9px; font-weight: 600; }
+.schedule-labels + .date-line { margin-top: 7px; }
+.schedule article.visit { align-items: start; padding-block: 15px; }
+.schedule .visit time { font-weight: 500; }
+.schedule .pet { color: var(--ink); font-weight: 650; }
+.schedule .visit small { margin-top: 4px; line-height: 1.45; }
+.schedule .visit :is(small a, .complaint) { color: var(--muted); }
+.schedule .visit-status.completed { font-weight: 500; }
+.schedule .visit-open { min-height: 30px; padding: 3px 9px; font-size: 13px; }
+
+.staff a:not([href^="tel:"]) { text-decoration:none }
+.staff a[href^="tel:"] { text-decoration:underline }
+.staff :is(a,button,summary) {
+    transition:color 130ms ease-out, background-color 130ms ease-out, border-color 130ms ease-out;
+}
+.staff a:not([href^="tel:"]):is(:hover,:focus-visible) { color:var(--accent-hover) }
+.staff :is(.visit-open,.chart-download):is(:hover,:focus-visible),
+.staff .exit:is(:hover,:focus-visible),
+.doctor-filter summary:hover { color:var(--accent-hover); background-color:var(--accent-soft) }
+.staff :is(.visit-open,.chart-download):hover { border-color:var(--line-strong) }
+.record-form button:hover,.search-row button:hover { background-color:var(--accent-hover) }
+.staff :is(button,.visit-open,.chart-download):active { filter:brightness(.93) }
+@media(min-width:851px) { .visit-open { justify-self:start } }
+@media(prefers-reduced-motion:reduce) { .staff :is(a,button,summary) { transition:none } }

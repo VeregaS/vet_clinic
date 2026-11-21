@@ -16,4 +16,6 @@ env/
 .idea/
 .vscode/
 
+.superpowers/
+
 postgres_data/

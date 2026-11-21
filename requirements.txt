@@ -2,7 +2,7 @@ asgiref==3.11.1
 brotli==1.2.0
 cffi==2.0.0
 cssselect2==0.8.0
-Django==5.2.11
+Django==5.2.19
 fonttools==4.61.1
 pillow==12.1.0
 psycopg2-binary==2.9.11

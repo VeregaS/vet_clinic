@@ -3,8 +3,10 @@ from datetime import timezone as dt_timezone
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
+from django.db import connection
 from django.db.models.deletion import ProtectedError
 from django.test import TestCase
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from django.utils import timezone
 
@@ -88,3 +90,30 @@ class WorkflowTests(TestCase):
                 reverse("doctor_dashboard"), {"filter": "tomorrow"}
             )
             self.assertFalse(tomorrow.context["appointments"])
+
+    def test_schedule_query_count_is_constant_per_page(self):
+        manager = get_user_model().objects.create_superuser("schedule-manager")
+        self.client.force_login(manager)
+        dashboard = reverse("doctor_dashboard")
+        start = timezone.now()
+        patient = Patient.objects.create(name="Пациент 1")
+        Appointment.objects.create(doctor=self.doc, patient=patient, date_time=start)
+
+        with CaptureQueriesContext(connection) as single:
+            response = self.client.get(dashboard)
+        self.assertEqual(len(response.context["appointments"]), 1)
+
+        for number in range(2, 26):
+            doctor = Doctor.objects.create(full_name=f"Врач {number}")
+            patient = Patient.objects.create(name=f"Пациент {number}")
+            Appointment.objects.create(
+                doctor=doctor,
+                patient=patient,
+                date_time=start + timedelta(minutes=number),
+            )
+
+        with self.assertNumQueries(len(single)):
+            response = self.client.get(dashboard)
+        self.assertEqual(len(response.context["appointments"]), 25)
+        self.assertContains(response, "Пациент 25")
+        self.assertContains(response, "Врач 25", count=2)
